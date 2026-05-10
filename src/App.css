@@ -19,6 +19,10 @@
   font-size: 1.2rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 30px;
+  max-width: 44rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
 }
 
 .icon {
@@ -35,9 +39,207 @@
   vertical-align: middle;
 }
 
-.setup-card {
-  max-width: 600px;
+/* Setup homepage — separate glass panels with space between */
+.setup-layout {
+  max-width: 36rem;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.setup-panel {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 1.5rem 1.65rem;
+  box-shadow:
+    0 4px 6px rgba(41, 35, 92, 0.06),
+    0 18px 38px rgba(41, 35, 92, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
+.setup-heading {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #2d2a44;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.setup-lede {
+  font-size: 0.95rem;
+  color: #5c5870;
+  line-height: 1.55;
+  margin: 0 0 1.25rem;
+}
+
+.setup-panel-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  font-weight: 700;
+  color: #5a54d6;
+  margin: 0 0 0.4rem;
+}
+
+.setup-panel-hint {
+  font-size: 0.875rem;
+  color: #6c6780;
+  margin: 0 0 1rem;
+  line-height: 1.45;
+}
+
+.setup-field-grid {
+  gap: 1rem 1.25rem;
+}
+
+.setup-field-grid .form-group {
+  margin-bottom: 0;
+}
+
+.setup-suggestions {
+  margin: 0;
+  padding: 1rem 1rem 1.05rem;
+  background: linear-gradient(
+    145deg,
+    rgba(102, 126, 234, 0.08) 0%,
+    rgba(118, 75, 162, 0.06) 100%
+  );
+  border-radius: 14px;
+  border: 1px solid rgba(102, 126, 234, 0.16);
+}
+
+.setup-suggestions .suggestion-buttons {
+  margin-top: 0;
+}
+
+.setup-suggestions .suggestions-placeholder {
+  padding: 0.75rem 0.35rem;
+  margin: 0;
+}
+
+.setup-options-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.setup-checkbox-row {
+  padding: 0.8rem 1rem;
+  background: rgba(102, 126, 234, 0.055);
+  border-radius: 12px;
+  border: 1px solid rgba(102, 126, 234, 0.12);
+  margin: 0;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.setup-checkbox-row input[type='checkbox'] {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.checkbox-label-text {
+  font-weight: 600;
+  color: #333;
+  line-height: 1.45;
+}
+
+.checkbox-label-text .green-numbers {
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.setup-actions {
+  padding-top: 0.15rem;
+}
+
+.setup-start-btn {
+  margin-top: 0;
+  box-shadow: 0 10px 28px rgba(102, 126, 234, 0.32);
+}
+
+.field-error {
+  font-size: 0.85rem;
+  color: #c0392b;
+  margin: 6px 0 0;
+  font-weight: 600;
+}
+
+.setup-validation-banner {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(255, 107, 107, 0.12);
+  border: 1px solid rgba(255, 107, 107, 0.35);
+  color: #922b2b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.help-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: #5a54d6;
+  cursor: help;
+  vertical-align: middle;
+  border-radius: 50%;
+}
+
+.help-icon-btn:hover,
+.help-icon-btn:focus-visible {
+  color: #764ba2;
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.risk-minimal-2-text {
+  text-align: left;
+}
+
+.add-money-note {
+  font-size: 0.88rem;
+  color: #666;
+  margin-top: 12px;
+  line-height: 1.45;
+}
+
+.game-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.capital-note {
+  font-size: 0.72rem;
+  color: #888;
+  margin: 4px 0 0;
+  line-height: 1.35;
+}
+
+@media (max-width: 540px) {
+  .setup-layout {
+    gap: 1rem;
+  }
+
+  .setup-panel {
+    padding: 1.2rem 1.2rem;
+  }
+
+  .setup-heading {
+    font-size: 1.22rem;
+  }
 }
 
 .btn-large {
@@ -69,27 +271,6 @@
   font-size: 0.9em;
   margin-left: 4px;
   border: 1px solid rgba(0, 184, 148, 0.2);
-}
-
-.bet-suggestions {
-  margin-top: 15px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.bet-suggestions-full-width {
-  width: 100%;
-  margin-top: 20px;
-  text-align: center;
-}
-
-.suggestions-label {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 10px;
-  font-weight: 600;
 }
 
 .suggestions-placeholder {
@@ -299,8 +480,8 @@
 /* Option 2: Simple card with icon */
 .risk-minimal-2 {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 10px;
   padding: 20px;
   background: rgba(255, 255, 255, 0.7);
@@ -310,7 +491,7 @@
   color: #666;
   font-size: 1.1rem;
   min-height: 80px;
-  text-align: center;
+  text-align: left;
 }
 
 .rounds-number-colored {
@@ -740,4 +921,175 @@
 
 .history-table::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(45deg, #764ba2, #667eea);
+}
+
+/* Wheel type (setup options) */
+.wheel-picker {
+  margin: 0.35rem 0 0;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 14px;
+  border: 1px dashed rgba(102, 126, 234, 0.32);
+}
+
+.wheel-picker legend.wheel-picker-heading {
+  padding: 0;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.wheel-picker-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.wheel-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.45;
+}
+
+.radio-label input {
+  margin-top: 3px;
+  accent-color: #667eea;
+}
+
+.wheel-session-banner {
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.15);
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.wheel-session-banner strong {
+  color: #fff;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+  text-underline-offset: 3px;
+}
+
+/* Site footer: disclaimer + Ko-fi */
+.site-footer {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  padding-bottom: 0.6rem;
+}
+
+.site-footer .fun-disclaimer {
+  margin-top: 0;
+  width: 100%;
+}
+
+.site-footer-support {
+  text-align: center;
+  max-width: 22rem;
+}
+
+.site-footer-support-lead {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+  margin: 0 0 0.65rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.site-footer-support-hint {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0.35rem 0 0;
+  line-height: 1.4;
+}
+
+.kofi-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  background: rgba(255, 255, 255, 0.97);
+  color: #4a3f7a;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.12),
+    0 12px 28px rgba(102, 126, 234, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kofi-btn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.14),
+    0 16px 36px rgba(102, 126, 234, 0.32);
+  color: #5a4fcf;
+}
+
+.kofi-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.kofi-btn-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: #764ba2;
+}
+
+.fun-disclaimer {
+  margin-top: 28px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 18px;
+  border: 2px dashed rgba(118, 75, 162, 0.35);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #444;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.fun-disclaimer p {
+  margin-bottom: 12px;
+}
+
+.fun-disclaimer p:last-child {
+  margin-bottom: 0;
+}
+
+.fun-disclaimer strong {
+  color: #5a4fcf;
+}
+
+@media (max-width: 480px) {
+  .fun-disclaimer {
+    padding: 16px;
+    font-size: 0.85rem;
+  }
 } 
