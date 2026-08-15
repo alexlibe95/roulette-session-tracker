@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { AlertTriangle, HelpCircle, RotateCcw } from 'lucide-react';
+import { AlertTriangle, Check, HelpCircle, RotateCcw, X } from 'lucide-react';
 import { formatMoney, parsePositiveMoney } from '../../game/betting';
 import { ColorSuggestion } from './ColorSuggestion';
 import { LiveBetControls } from './LiveBetControls';
@@ -48,6 +48,7 @@ export function CurrentRoundCard({
         <ColorSuggestion
           strategy={strategy}
           includeGreen={sessionIncludeGreen}
+          currentBet={currentBet}
           onSelect={onSetStrategy}
           onReroll={onReroll}
         />
@@ -116,11 +117,23 @@ export function CurrentRoundCard({
         </div>
       ) : canAffordBet ? (
         <div className="action-buttons">
-          <button type="button" className="btn btn-success" onClick={() => onWin(flushStake())}>
-            Won this spin
+          <button
+            type="button"
+            className="btn btn-result btn-result-win"
+            aria-label="Won this spin"
+            onClick={() => onWin(flushStake())}
+          >
+            <Check className="btn-result-icon" strokeWidth={3} aria-hidden />
+            <span className="btn-result-label">Won</span>
           </button>
-          <button type="button" className="btn btn-danger" onClick={() => onLoss(flushStake())}>
-            Lost this spin
+          <button
+            type="button"
+            className="btn btn-result btn-result-loss"
+            aria-label="Lost this spin"
+            onClick={() => onLoss(flushStake())}
+          >
+            <X className="btn-result-icon" strokeWidth={3} aria-hidden />
+            <span className="btn-result-label">Lost</span>
           </button>
         </div>
       ) : (
