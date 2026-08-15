@@ -4,7 +4,7 @@
 export function RoundAnnouncer({ gameHistory }) {
   const last = gameHistory.length > 0 ? gameHistory[gameHistory.length - 1] : null;
   const message = last
-    ? `Round ${last.round}: ${last.result}. Balance ${last.balance.toFixed(2)} dollars.`
+    ? `Round ${last.round}: ${last.result} on ${last.strategy}, stake ${last.bet.toFixed(2)}. Balance ${last.balance.toFixed(2)} dollars.`
     : '';
 
   return (

@@ -1,8 +1,10 @@
-import { calculateNextBetAmount } from './betting';
+import { calculateNextBetAmount, roundMoney } from './betting';
 import { generateStrategy } from './strategy';
 
 function newEntryId() {
-  return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `r-${Date.now()}-${Math.random()}`;
+  return typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `r-${Date.now()}-${Math.random()}`;
 }
 
 export const initialPlayState = {
@@ -26,6 +28,11 @@ function withHistoryIds(history) {
   return history.map((e) => ({ ...e, id: e.id ?? newEntryId() }));
 }
 
+function isColor(strategy, includeGreen) {
+  if (strategy === 'red' || strategy === 'black') return true;
+  return strategy === 'green' && includeGreen;
+}
+
 export function playReducer(state, action) {
   switch (action.type) {
     case 'HYDRATE': {
@@ -34,35 +41,65 @@ export function playReducer(state, action) {
         ...initialPlayState,
         ...s,
         gameHistory: withHistoryIds(s.gameHistory),
-        sessionStartingBankroll: Number(s.sessionStartingBankroll) || 0,
-        cumulativeTopUps: Number(s.cumulativeTopUps) || 0,
+        currentMoney: roundMoney(s.currentMoney),
+        currentBet: roundMoney(s.currentBet),
+        baseBet: roundMoney(s.baseBet),
+        totalProfit: roundMoney(s.totalProfit),
+        consecutiveLosses: Number(s.consecutiveLosses) || 0,
+        consecutiveWins: Number(s.consecutiveWins) || 0,
+        sessionStartingBankroll: roundMoney(s.sessionStartingBankroll) || 0,
+        cumulativeTopUps: roundMoney(s.cumulativeTopUps) || 0,
       };
     }
     case 'START': {
       const { money, bet, includeGreen, wheelType } = action;
+      const startMoney = roundMoney(money);
+      const startBet = roundMoney(bet);
       return {
         ...initialPlayState,
-        currentMoney: money,
-        currentBet: bet,
-        baseBet: bet,
+        currentMoney: startMoney,
+        currentBet: startBet,
+        baseBet: startBet,
         sessionIncludeGreen: includeGreen,
         sessionWheelType: wheelType,
-        sessionStartingBankroll: money,
+        sessionStartingBankroll: startMoney,
         cumulativeTopUps: 0,
         strategy: generateStrategy(includeGreen, wheelType),
       };
     }
     case 'RESET_PLAY':
       return initialPlayState;
+    case 'SET_BET': {
+      const bet = roundMoney(action.bet);
+      if (!Number.isFinite(bet) || bet <= 0) return state;
+      return { ...state, currentBet: bet };
+    }
+    case 'SET_BASE_BET': {
+      const bet = roundMoney(action.bet);
+      if (!Number.isFinite(bet) || bet <= 0) return state;
+      return { ...state, baseBet: bet };
+    }
+    case 'SET_STRATEGY': {
+      if (!isColor(action.strategy, state.sessionIncludeGreen)) return state;
+      return { ...state, strategy: action.strategy };
+    }
+    case 'REROLL_STRATEGY':
+      return {
+        ...state,
+        strategy: generateStrategy(state.sessionIncludeGreen, state.sessionWheelType),
+      };
     case 'RECORD_RESULT': {
       const { won, customBetAmount, isProgressiveBetting } = action;
-      const betAmount =
-        customBetAmount != null && customBetAmount !== '' ? customBetAmount : state.currentBet;
+      const betAmount = roundMoney(
+        customBetAmount != null && customBetAmount !== '' ? customBetAmount : state.currentBet,
+      );
+      if (!Number.isFinite(betAmount) || betAmount <= 0) return state;
+      if (betAmount > roundMoney(state.currentMoney)) return state;
+
       const {
         round,
         strategy,
         currentMoney,
-        currentBet,
         baseBet,
         consecutiveWins,
         consecutiveLosses,
@@ -71,19 +108,21 @@ export function playReducer(state, action) {
       } = state;
 
       const newHistory = [...gameHistory];
+      const nextBet = roundMoney(
+        calculateNextBetAmount(
+          isProgressiveBetting,
+          won,
+          consecutiveWins,
+          betAmount,
+          baseBet,
+        ),
+      );
 
       if (won) {
         const winAmount = betAmount;
         const newWinStreak = consecutiveWins + 1;
-        const newMoney = currentMoney + winAmount;
-        const newProfit = totalProfit + winAmount;
-        const nextBet = calculateNextBetAmount(
-          isProgressiveBetting,
-          true,
-          consecutiveWins,
-          currentBet,
-          baseBet,
-        );
+        const newMoney = roundMoney(currentMoney + winAmount);
+        const newProfit = roundMoney(totalProfit + winAmount);
 
         newHistory.push({
           id: newEntryId(),
@@ -93,11 +132,12 @@ export function playReducer(state, action) {
           strategy,
           profit: winAmount,
           balance: newMoney,
-          previousBet: currentBet,
+          previousBet: state.currentBet,
           previousMoney: currentMoney,
           previousProfit: totalProfit,
           previousLosses: consecutiveLosses,
           previousWins: consecutiveWins,
+          previousBaseBet: baseBet,
           winStreak: newWinStreak,
           nextBet,
         });
@@ -108,23 +148,16 @@ export function playReducer(state, action) {
           totalProfit: newProfit,
           consecutiveLosses: 0,
           consecutiveWins: newWinStreak,
-          currentBet: nextBet,
+          currentBet: nextBet > 0 ? nextBet : baseBet,
           gameHistory: newHistory,
           round: round + 1,
           strategy: generateStrategy(state.sessionIncludeGreen, state.sessionWheelType),
         };
       }
 
-      const newMoney = currentMoney - betAmount;
-      const newProfit = totalProfit - betAmount;
+      const newMoney = roundMoney(currentMoney - betAmount);
+      const newProfit = roundMoney(totalProfit - betAmount);
       const newLossStreak = consecutiveLosses + 1;
-      const nextBet = calculateNextBetAmount(
-        isProgressiveBetting,
-        false,
-        consecutiveWins,
-        currentBet,
-        baseBet,
-      );
 
       newHistory.push({
         id: newEntryId(),
@@ -132,13 +165,14 @@ export function playReducer(state, action) {
         bet: betAmount,
         result: 'loss',
         strategy,
-        profit: -betAmount,
+        profit: roundMoney(-betAmount),
         balance: newMoney,
-        previousBet: currentBet,
+        previousBet: state.currentBet,
         previousMoney: currentMoney,
         previousProfit: totalProfit,
         previousLosses: consecutiveLosses,
         previousWins: consecutiveWins,
+        previousBaseBet: baseBet,
         winStreak: 0,
         nextBet,
       });
@@ -149,7 +183,7 @@ export function playReducer(state, action) {
         totalProfit: newProfit,
         consecutiveLosses: newLossStreak,
         consecutiveWins: 0,
-        currentBet: nextBet,
+        currentBet: nextBet > 0 ? nextBet : baseBet,
         gameHistory: newHistory,
         round: round + 1,
         strategy: generateStrategy(state.sessionIncludeGreen, state.sessionWheelType),
@@ -163,6 +197,7 @@ export function playReducer(state, action) {
         currentMoney: lastRound.previousMoney,
         totalProfit: lastRound.previousProfit,
         currentBet: lastRound.previousBet,
+        baseBet: lastRound.previousBaseBet ?? state.baseBet,
         consecutiveLosses: lastRound.previousLosses,
         consecutiveWins: lastRound.previousWins ?? 0,
         round: state.round - 1,
@@ -170,12 +205,13 @@ export function playReducer(state, action) {
         strategy: lastRound.strategy,
       };
     }
-    case 'ADD_MONEY_CONTINUE': {
-      const delta = Math.max(0, state.currentBet - state.currentMoney);
+    case 'ADD_MONEY': {
+      const amount = roundMoney(action.amount);
+      if (!(amount > 0)) return state;
       return {
         ...state,
-        currentMoney: state.currentBet,
-        cumulativeTopUps: state.cumulativeTopUps + delta,
+        currentMoney: roundMoney(state.currentMoney + amount),
+        cumulativeTopUps: roundMoney(state.cumulativeTopUps + amount),
       };
     }
     default:

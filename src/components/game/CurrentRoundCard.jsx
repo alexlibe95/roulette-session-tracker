@@ -1,11 +1,17 @@
+import { useRef } from 'react';
 import { AlertTriangle, HelpCircle, RotateCcw } from 'lucide-react';
+import { formatMoney, parsePositiveMoney } from '../../game/betting';
+import { ColorSuggestion } from './ColorSuggestion';
+import { LiveBetControls } from './LiveBetControls';
+import { AddFundsRow } from './AddFundsRow';
 
 const SAFE_LOSSES_HELP =
-  'Assumes every future loss doubles your stake (simple Martingale). If you use progressive staking, the next stake can change, so treat this as a guide—not a guarantee.';
+  'Assumes every future loss doubles your stake (simple Martingale). If you change the stake or use progressive sizing, treat this as a guide—not a guarantee.';
 
 export function CurrentRoundCard({
   round,
   strategy,
+  sessionIncludeGreen,
   currentBet,
   currentMoney,
   maxPossibleLosses,
@@ -15,23 +21,36 @@ export function CurrentRoundCard({
   gameHistory,
   onWin,
   onLoss,
-  onPlayRemaining,
+  onSetBet,
+  onSetBaseBet,
+  onSetStrategy,
+  onReroll,
+  onProgressiveChange,
   onAddMoney,
   onUndo,
 }) {
-  const canAffordBet = currentMoney >= currentBet;
-  const showUndo = gameHistory.length > 0 && canAffordBet;
+  const canAffordBet = currentMoney >= currentBet && currentBet > 0 && currentMoney > 0;
+  const broke = currentMoney <= 0;
+  const shortfall = currentBet > currentMoney ? currentBet - currentMoney : 0;
+  const showUndo = gameHistory.length > 0;
+  const betRef = useRef(null);
+
+  const flushStake = () => {
+    const flushed = betRef.current?.flush?.();
+    return parsePositiveMoney(flushed) ?? currentBet;
+  };
 
   return (
     <div className="card current-round">
       <h2>Round {round}</h2>
 
       <div className="prediction-display">
-        <div className="strategy-recommendation">
-          <h3>Round suggestion</h3>
-          <div className={`color-choice ${strategy}`}>{strategy.toUpperCase()}</div>
-          <p className="bet-amount">Bet: ${currentBet.toFixed(2)}</p>
-        </div>
+        <ColorSuggestion
+          strategy={strategy}
+          includeGreen={sessionIncludeGreen}
+          onSelect={onSetStrategy}
+          onReroll={onReroll}
+        />
 
         <div className="risk-minimal-2">
           <AlertTriangle size={20} aria-hidden />
@@ -44,7 +63,7 @@ export function CurrentRoundCard({
             >
               {maxPossibleLosses}
             </strong>{' '}
-            more losses (if each loss doubles the stake)
+            more losses (if each loss doubles this stake)
             <button
               type="button"
               className="help-icon-btn"
@@ -57,95 +76,92 @@ export function CurrentRoundCard({
         </div>
       </div>
 
+      <LiveBetControls
+        ref={betRef}
+        currentBet={currentBet}
+        currentMoney={currentMoney}
+        baseBet={baseBet}
+        onSetBet={onSetBet}
+        onSetBaseBet={onSetBaseBet}
+      />
+
       <div className="betting-strategy-container">
-        {isProgressiveBetting && (
-          <div className="betting-strategy-info">
-            <p className="strategy-mode">📈 Progressive Mode</p>
-            {consecutiveWins > 0 && (
-              <div>
-                <p className="win-streak-bonus">
-                  🔥 Win streak: {consecutiveWins} | Next stake: progression rules
-                </p>
-                <p className="cycle-info">
-                  {consecutiveWins <= 1 && '🎯 Modest increase options (1x-2x)'}
-                  {consecutiveWins === 2 && '⚖️ Balanced choices (1x-3x)'}
-                  {consecutiveWins === 3 && '🎰 More options (1x-4x)'}
-                  {consecutiveWins > 3 && consecutiveWins <= 6 && '💫 Peak opportunities (1x-5x)'}
-                  {consecutiveWins > 6 && '💰 Conservative with rare big bets (1x-6x)'}
-                </p>
-              </div>
-            )}
-            <p className="base-bet-info">Base bet: ${baseBet.toFixed(2)}</p>
-          </div>
-        )}
-        {!isProgressiveBetting && (
-          <div className="betting-strategy-info">
-            <p className="strategy-mode">🔄 Classic Martingale</p>
-            <p className="base-bet-info">Base bet: ${baseBet.toFixed(2)}</p>
-          </div>
-        )}
+        <div className="betting-strategy-info">
+          <label className="checkbox-label staking-toggle">
+            <input
+              type="checkbox"
+              checked={isProgressiveBetting}
+              onChange={(e) => onProgressiveChange(e.target.checked)}
+            />
+            <span>
+              {isProgressiveBetting ? 'Progressive sizing' : 'Classic Martingale'} — next stake after this
+              spin
+            </span>
+          </label>
+          {isProgressiveBetting && consecutiveWins > 0 && (
+            <p className="win-streak-bonus">
+              Win streak {consecutiveWins}: next suggestion can step up from base
+            </p>
+          )}
+          {!isProgressiveBetting && (
+            <p className="base-bet-info">Losses double the stake you just played; a win returns to base.</p>
+          )}
+        </div>
       </div>
 
-      {canAffordBet ? (
+      {broke ? (
+        <div className="final-round-options">
+          <h3 className="final-round-title">Bankroll is empty</h3>
+          <p className="final-round-info">Add chips to keep logging, or undo the last spin if that was a misclick.</p>
+        </div>
+      ) : canAffordBet ? (
         <div className="action-buttons">
-          <button type="button" className="btn btn-success" onClick={onWin}>
-            Won This Round
+          <button type="button" className="btn btn-success" onClick={() => onWin(flushStake())}>
+            Won this spin
           </button>
-          <button type="button" className="btn btn-danger" onClick={onLoss}>
-            Lost This Round
+          <button type="button" className="btn btn-danger" onClick={() => onLoss(flushStake())}>
+            Lost this spin
           </button>
         </div>
       ) : (
         <div className="final-round-options">
-          <h3 className="final-round-title">Insufficient Funds</h3>
+          <h3 className="final-round-title">Stake is bigger than your balance</h3>
           <p className="final-round-info">
-            You have ${currentMoney.toFixed(2)} but need ${currentBet.toFixed(2)} for the proper bet
+            You have ${formatMoney(currentMoney)} but this spin is set to ${formatMoney(currentBet)}.
           </p>
           <p className="money-needed">
-            You need <strong>${(currentBet - currentMoney).toFixed(2)} more</strong> to continue
+            Lower the stake, or add <strong>${formatMoney(shortfall)}</strong> to cover it.
           </p>
-
           <div className="final-options-grid">
             <div className="final-option">
               <div className="option-content">
-                <h4>Option 1: Play with what you have</h4>
-                <p>Bet your remaining ${currentMoney.toFixed(2)} (final round)</p>
+                <h4>Use remaining balance</h4>
+                <p>Set this spin to ${formatMoney(currentMoney)} so you can log a win or a loss.</p>
               </div>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={onPlayRemaining}
-                disabled={currentMoney <= 0}
-              >
-                Bet Remaining ${currentMoney.toFixed(2)}
+              <button type="button" className="btn btn-primary" onClick={() => onSetBet(currentMoney)}>
+                Stake ${formatMoney(currentMoney)}
               </button>
             </div>
-
             <div className="final-option">
               <div className="option-content">
-                <h4>Option 2: Add money and continue</h4>
-                <p>
-                  Add ${(currentBet - currentMoney).toFixed(2)} to your balance and play the proper bet of $
-                  {currentBet.toFixed(2)}
-                </p>
+                <h4>Cover the current stake</h4>
+                <p>Drop in the shortfall and keep ${formatMoney(currentBet)} on this spin.</p>
               </div>
-              <button type="button" className="btn btn-secondary" onClick={onAddMoney}>
-                Add ${(currentBet - currentMoney).toFixed(2)} & Continue
+              <button type="button" className="btn btn-secondary" onClick={() => onAddMoney(shortfall)}>
+                Add ${formatMoney(shortfall)}
               </button>
             </div>
           </div>
-          <p className="add-money-note">
-            Amounts you add here count toward <strong>total capital in session</strong> for the profit % on the
-            stats row—they don’t change the session win/loss tally itself, only what you’ve put at risk.
-          </p>
         </div>
       )}
+
+      <AddFundsRow suggestedAmount={shortfall} onAddMoney={onAddMoney} />
 
       {showUndo && (
         <div className="undo-section">
           <button type="button" className="btn btn-secondary" onClick={onUndo}>
             <RotateCcw className="inline-icon" />
-            Undo Last Round
+            Undo last spin
           </button>
         </div>
       )}

@@ -573,17 +573,27 @@
 
 .betting-strategy-container {
   width: 100%;
-  margin: 20px 0;
-  min-height: 120px; /* Fixed height to prevent jumping */
+  margin: 16px 0 8px;
 }
 
 .betting-strategy-info {
-  padding: 20px;
+  padding: 16px 18px;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 12px;
   border-left: 4px solid #667eea;
-  text-align: center;
+  text-align: left;
   width: 100%;
+}
+
+.staking-toggle {
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.staking-toggle input {
+  margin-top: 3px;
 }
 
 .strategy-mode {
@@ -596,14 +606,14 @@
 .win-streak-bonus {
   font-size: 0.8rem;
   color: #00b894;
-  margin: 5px 0;
+  margin: 8px 0 0;
   font-style: italic;
 }
 
 .base-bet-info {
   font-size: 0.8rem;
   color: #666;
-  margin: 5px 0 0 0;
+  margin: 8px 0 0;
 }
 
 .cycle-info {
@@ -612,6 +622,219 @@
   margin: 5px 0;
   font-style: italic;
   font-weight: 600;
+}
+
+.color-picker-hint {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0 0 10px;
+  line-height: 1.4;
+}
+
+.color-picker-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.color-chip {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  color: white;
+}
+
+.color-chip.red {
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+}
+
+.color-chip.black {
+  background: linear-gradient(45deg, #2d3436, #636e72);
+}
+
+.color-chip.green {
+  background: linear-gradient(45deg, #00b894, #00a085);
+}
+
+.color-chip.is-selected {
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.45);
+}
+
+.color-chip-shuffle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f2f6;
+  color: #2d2a44;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.live-bet-controls {
+  text-align: left;
+  padding: 18px;
+  background: rgba(102, 126, 234, 0.06);
+  border: 1px solid rgba(102, 126, 234, 0.16);
+  border-radius: 14px;
+  margin: 8px 0 4px;
+}
+
+.live-bet-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #5a54d6;
+  margin-bottom: 8px;
+}
+
+.live-bet-input-row,
+.live-base-fields,
+.add-funds-fields {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.live-bet-prefix {
+  font-weight: 800;
+  color: #2d2a44;
+  font-size: 1.15rem;
+}
+
+.live-bet-input {
+  font-size: 1.35rem;
+  font-weight: 800;
+  max-width: 180px;
+}
+
+.live-bet-input.is-over {
+  border-color: #ff6b6b;
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+}
+
+.live-bet-meta {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  color: #5c5870;
+}
+
+.live-bet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.bet-chip {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: white;
+  color: #2d2a44;
+  box-shadow: 0 2px 8px rgba(41, 35, 92, 0.08);
+  cursor: pointer;
+}
+
+.bet-chip:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.bet-chip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.live-base-row {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(102, 126, 234, 0.28);
+}
+
+.live-base-row > label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #5c5870;
+  margin-bottom: 6px;
+}
+
+.live-base-input {
+  max-width: 120px;
+}
+
+.live-base-apply {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.add-funds-row {
+  margin-top: 20px;
+  text-align: left;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 12px;
+  border: 1px dashed rgba(102, 126, 234, 0.28);
+}
+
+.add-funds-row > label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #5c5870;
+  margin-bottom: 8px;
+}
+
+.add-funds-fields .form-control {
+  max-width: 140px;
+}
+
+.add-funds-fields .btn {
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.reset-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  max-width: 28rem;
+}
+
+.reset-confirm p {
+  width: 100%;
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+.history-more {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.history-toggle {
+  border: none;
+  background: none;
+  color: #5a54d6;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 @keyframes pulse-danger {
@@ -891,11 +1114,11 @@
   animation: pulse 2s infinite;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   transform: translateY(-2px);
 }
 
-.btn:active {
+.btn:active:not(:disabled) {
   transform: translateY(0);
 }
 
@@ -986,7 +1209,7 @@
   text-underline-offset: 3px;
 }
 
-/* Site footer: disclaimer + Ko-fi */
+/* Site footer */
 .site-footer {
   margin-top: 2rem;
   display: flex;
@@ -999,65 +1222,6 @@
 .site-footer .fun-disclaimer {
   margin-top: 0;
   width: 100%;
-}
-
-.site-footer-support {
-  text-align: center;
-  max-width: 22rem;
-}
-
-.site-footer-support-lead {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 600;
-  margin: 0 0 0.65rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-}
-
-.site-footer-support-hint {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.78);
-  margin: 0.35rem 0 0;
-  line-height: 1.4;
-}
-
-.kofi-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1.4rem;
-  background: rgba(255, 255, 255, 0.97);
-  color: #4a3f7a;
-  font-weight: 700;
-  font-size: 0.95rem;
-  text-decoration: none;
-  border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.65);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.12),
-    0 12px 28px rgba(102, 126, 234, 0.25);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.kofi-btn:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.14),
-    0 16px 36px rgba(102, 126, 234, 0.32);
-  color: #5a4fcf;
-}
-
-.kofi-btn:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 3px;
-}
-
-.kofi-btn-icon {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  color: #764ba2;
 }
 
 .fun-disclaimer {

@@ -1,6 +1,6 @@
 import { useReducer, useState, useEffect, useRef } from 'react';
 import { initialPlayState, playReducer } from './game/playReducer';
-import { calculateMaxLosses } from './game/betting';
+import { calculateMaxLosses, roundMoney } from './game/betting';
 import { useRiskLevel } from './hooks/useRiskLevel';
 import { loadSession, saveSession, clearSession } from './persistence/sessionPersistence';
 import { exportSessionJson, exportSessionCsv } from './utils/exportSession';
@@ -47,6 +47,7 @@ function App() {
   const [setupErrors, setSetupErrors] = useState({});
   const [play, dispatchPlay] = useReducer(playReducer, initialPlayState);
   const hasHydrated = useRef(false);
+  const recordLock = useRef(false);
   const [riskLevel, setRiskLevel] = useRiskLevel(gameStarted, play.currentMoney, play.currentBet);
 
   const {
@@ -56,6 +57,7 @@ function App() {
     round,
     gameHistory,
     consecutiveWins,
+    consecutiveLosses,
     totalProfit,
     strategy,
     sessionIncludeGreen,
@@ -143,17 +145,21 @@ function App() {
     setRiskLevel('low');
   };
 
-  const recordResult = (won, customBetAmount = null) => {
+  const recordResult = (won, stake) => {
+    if (recordLock.current) return;
+    const bet = stake != null ? roundMoney(stake) : currentBet;
+    if (currentMoney < bet || bet <= 0 || currentMoney <= 0) return;
+    recordLock.current = true;
+    dispatchPlay({ type: 'SET_BET', bet });
     dispatchPlay({
       type: 'RECORD_RESULT',
       won,
-      customBetAmount,
+      customBetAmount: bet,
       isProgressiveBetting,
     });
-  };
-
-  const playWithRemainingBalance = () => {
-    recordResult(false, currentMoney);
+    window.setTimeout(() => {
+      recordLock.current = false;
+    }, 280);
   };
 
   const maxPossibleLosses = gameStarted ? calculateMaxLosses(currentMoney, currentBet) : 0;
@@ -209,13 +215,18 @@ function App() {
             round={round}
             strategy={strategy}
             consecutiveWins={consecutiveWins}
+            consecutiveLosses={consecutiveLosses}
             gameHistory={gameHistory}
             maxPossibleLosses={maxPossibleLosses}
             isProgressiveBetting={isProgressiveBetting}
-            onWinRound={() => recordResult(true)}
-            onLoseRound={() => recordResult(false)}
-            onPlayRemaining={playWithRemainingBalance}
-            onAddMoney={() => dispatchPlay({ type: 'ADD_MONEY_CONTINUE' })}
+            onWinRound={(stake) => recordResult(true, stake)}
+            onLoseRound={(stake) => recordResult(false, stake)}
+            onSetBet={(bet) => dispatchPlay({ type: 'SET_BET', bet })}
+            onSetBaseBet={(bet) => dispatchPlay({ type: 'SET_BASE_BET', bet })}
+            onSetStrategy={(strategy) => dispatchPlay({ type: 'SET_STRATEGY', strategy })}
+            onReroll={() => dispatchPlay({ type: 'REROLL_STRATEGY' })}
+            onProgressiveChange={setIsProgressiveBetting}
+            onAddMoney={(amount) => dispatchPlay({ type: 'ADD_MONEY', amount: roundMoney(amount) })}
             onUndo={() => dispatchPlay({ type: 'UNDO' })}
             onReset={resetGame}
             onExportJson={() => exportSessionJson(buildExportSnapshot())}

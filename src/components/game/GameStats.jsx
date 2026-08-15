@@ -7,6 +7,7 @@ export function GameStats({
   totalProfit,
   profitPct,
   consecutiveWins,
+  consecutiveLosses,
   gameHistory,
   riskLevel,
 }) {
@@ -54,9 +55,12 @@ export function GameStats({
       </div>
 
       <div className="stat-card">
-        <h3>Win Streak {consecutiveWins > 0 ? '🔥' : ''}</h3>
-        <p className={`stat-value ${consecutiveWins > 0 ? 'text-success' : 'text-warning'}`}>
-          {consecutiveWins}
+        <h3>Streak</h3>
+        <p className={`stat-value ${consecutiveWins > 0 ? 'text-success' : consecutiveLosses > 0 ? 'text-danger' : 'text-warning'}`}>
+          {consecutiveWins > 0 ? `W${consecutiveWins}` : consecutiveLosses > 0 ? `L${consecutiveLosses}` : '—'}
+        </p>
+        <p className="ratio-details">
+          {consecutiveWins} win · {consecutiveLosses} loss
         </p>
       </div>
 

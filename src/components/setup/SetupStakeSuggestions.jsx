@@ -1,4 +1,8 @@
+import { parsePositiveMoney, formatMoney, roundMoney } from '../../game/betting';
+
 export function SetupStakeSuggestions({ bankroll, onPickStake }) {
+  const bank = parsePositiveMoney(bankroll);
+
   return (
     <section className="setup-panel" aria-labelledby="suggestions-heading">
       <h3 id="suggestions-heading" className="setup-panel-title">
@@ -6,31 +10,31 @@ export function SetupStakeSuggestions({ bankroll, onPickStake }) {
       </h3>
       <p className="setup-panel-hint">Based on your bankroll—tap one to fill “Initial bet” above.</p>
       <div className="setup-suggestions">
-        {bankroll ? (
+        {bank != null ? (
           <div className="suggestion-buttons">
             <button
               type="button"
               className="suggestion-btn low-risk"
-              onClick={() => onPickStake((parseFloat(bankroll) * 0.01).toFixed(2))}
+              onClick={() => onPickStake(formatMoney(roundMoney(bank * 0.01)))}
               title="1% of bankroll - Very safe, many rounds possible"
             >
-              Low: ${(parseFloat(bankroll) * 0.01).toFixed(2)}
+              Low: ${formatMoney(roundMoney(bank * 0.01))}
             </button>
             <button
               type="button"
               className="suggestion-btn normal-risk"
-              onClick={() => onPickStake((parseFloat(bankroll) * 0.025).toFixed(2))}
+              onClick={() => onPickStake(formatMoney(roundMoney(bank * 0.025)))}
               title="2.5% of bankroll - Balanced risk/reward"
             >
-              Mid: ${(parseFloat(bankroll) * 0.025).toFixed(2)}
+              Mid: ${formatMoney(roundMoney(bank * 0.025))}
             </button>
             <button
               type="button"
               className="suggestion-btn high-risk"
-              onClick={() => onPickStake((parseFloat(bankroll) * 0.05).toFixed(2))}
+              onClick={() => onPickStake(formatMoney(roundMoney(bank * 0.05)))}
               title="5% of bankroll - Higher risk, fewer safe rounds"
             >
-              Bold: ${(parseFloat(bankroll) * 0.05).toFixed(2)}
+              Bold: ${formatMoney(roundMoney(bank * 0.05))}
             </button>
           </div>
         ) : (

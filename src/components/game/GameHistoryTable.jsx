@@ -1,7 +1,11 @@
+import { useState } from 'react';
+
 export function GameHistoryTable({ gameHistory }) {
+  const [showAll, setShowAll] = useState(false);
+
   if (gameHistory.length === 0) return null;
 
-  const tail = gameHistory.slice(-10).reverse();
+  const tail = (showAll ? gameHistory : gameHistory.slice(-10)).slice().reverse();
 
   return (
     <div className="card mt-4">
@@ -28,7 +32,14 @@ export function GameHistoryTable({ gameHistory }) {
           </div>
         ))}
       </div>
-      {gameHistory.length > 10 && <p className="text-center mt-2">Showing last 10 rounds</p>}
+      {gameHistory.length > 10 && (
+        <p className="text-center mt-2 history-more">
+          {showAll ? `Showing all ${gameHistory.length} spins` : 'Showing last 10 spins'}{' '}
+          <button type="button" className="history-toggle" onClick={() => setShowAll((v) => !v)}>
+            {showAll ? 'Show last 10' : 'Show all'}
+          </button>
+        </p>
+      )}
     </div>
   );
 }
