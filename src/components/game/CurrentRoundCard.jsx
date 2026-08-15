@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Check, HelpCircle, RotateCcw, X } from 'lucide-react';
 import { formatMoney, parsePositiveMoney } from '../../game/betting';
 import { ColorSuggestion } from './ColorSuggestion';
@@ -38,14 +38,29 @@ export function CurrentRoundCard({
   const shortfall = currentBet > currentMoney ? currentBet - currentMoney : 0;
   const showUndo = gameHistory.length > 0;
   const betRef = useRef(null);
+  const [flash, setFlash] = useState(null);
+  const flashTimer = useRef(null);
+
+  useEffect(() => () => window.clearTimeout(flashTimer.current), []);
 
   const flushStake = () => {
     const flushed = betRef.current?.flush?.();
     return parsePositiveMoney(flushed) ?? currentBet;
   };
 
+  const handleResult = (kind) => {
+    if (flash) return;
+    const stake = flushStake();
+    setFlash(kind);
+    flashTimer.current = window.setTimeout(() => {
+      if (kind === 'win') onWin(stake);
+      else onLoss(stake);
+      setFlash(null);
+    }, 480);
+  };
+
   return (
-    <div className="card current-round">
+    <div className={`card current-round${flash ? ` is-result-${flash}` : ''}`}>
       <h2>Round {round}</h2>
 
       <div className="prediction-display">
@@ -123,22 +138,29 @@ export function CurrentRoundCard({
         <div className="action-buttons">
           <button
             type="button"
-            className="btn btn-result btn-result-win"
+            className={`btn btn-result btn-result-win${flash === 'win' ? ' is-firing' : ''}`}
             aria-label="Won this spin"
-            onClick={() => onWin(flushStake())}
+            disabled={Boolean(flash)}
+            onClick={() => handleResult('win')}
           >
             <Check className="btn-result-icon" strokeWidth={3} aria-hidden />
-            <span className="btn-result-label">Won</span>
+            <span className="btn-result-label">{flash === 'win' ? 'Logged' : 'Won'}</span>
           </button>
           <button
             type="button"
-            className="btn btn-result btn-result-loss"
+            className={`btn btn-result btn-result-loss${flash === 'loss' ? ' is-firing' : ''}`}
             aria-label="Lost this spin"
-            onClick={() => onLoss(flushStake())}
+            disabled={Boolean(flash)}
+            onClick={() => handleResult('loss')}
           >
             <X className="btn-result-icon" strokeWidth={3} aria-hidden />
-            <span className="btn-result-label">Lost</span>
+            <span className="btn-result-label">{flash === 'loss' ? 'Logged' : 'Lost'}</span>
           </button>
+          {flash && (
+            <div className={`result-burst result-burst-${flash}`} aria-hidden>
+              {flash === 'win' ? 'WON' : 'LOST'}
+            </div>
+          )}
         </div>
       ) : (
         <div className="final-round-options">

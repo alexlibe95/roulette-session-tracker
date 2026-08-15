@@ -861,6 +861,7 @@
 }
 
 .action-buttons {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
@@ -915,6 +916,127 @@
 .btn-result-loss:hover:not(:disabled) {
   box-shadow: 0 0 40px rgba(255, 59, 107, 0.45);
   filter: brightness(1.06);
+}
+
+.btn-result.is-firing {
+  animation: result-fire 0.48s ease-out;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.btn-result.is-firing:disabled,
+.btn-result.is-firing:disabled:hover {
+  opacity: 1;
+  filter: none;
+  cursor: default;
+}
+
+.btn-result-win.is-firing {
+  box-shadow: 0 0 48px rgba(0, 255, 166, 0.75);
+}
+
+.btn-result-loss.is-firing {
+  box-shadow: 0 0 48px rgba(255, 59, 107, 0.75);
+}
+
+@keyframes result-fire {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  18% {
+    transform: scale(0.9);
+    filter: brightness(1.45);
+  }
+  48% {
+    transform: scale(1.08);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.result-burst {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  z-index: 3;
+  animation: result-burst 0.48s ease-out forwards;
+  text-shadow: 0 0 24px currentColor;
+}
+
+.result-burst-win {
+  color: var(--win);
+}
+
+.result-burst-loss {
+  color: var(--loss);
+}
+
+@keyframes result-burst {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+
+.current-round.is-result-win {
+  animation: card-result-win 0.48s ease-out;
+}
+
+.current-round.is-result-loss {
+  animation: card-result-loss 0.48s ease-out;
+}
+
+@keyframes card-result-win {
+  0%,
+  100% {
+    box-shadow: var(--shadow);
+  }
+  40% {
+    box-shadow: 0 0 0 2px var(--win), 0 0 42px rgba(0, 255, 166, 0.45);
+  }
+}
+
+@keyframes card-result-loss {
+  0%,
+  100% {
+    box-shadow: var(--shadow);
+  }
+  40% {
+    box-shadow: 0 0 0 2px var(--loss), 0 0 42px rgba(255, 59, 107, 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-result.is-firing,
+  .result-burst,
+  .current-round.is-result-win,
+  .current-round.is-result-loss {
+    animation: none;
+  }
+
+  .result-burst {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .undo-section {

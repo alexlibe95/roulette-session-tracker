@@ -156,7 +156,7 @@ function App() {
     });
     window.setTimeout(() => {
       recordLock.current = false;
-    }, 280);
+    }, 520);
   };
 
   const maxPossibleLosses = gameStarted
