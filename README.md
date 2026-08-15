@@ -25,7 +25,7 @@ bun run preview  # serve the production build locally
 
 - Production builds register a **service worker** (`vite-plugin-pwa`) that **precaches** the app shell (JS/CSS/HTML and static assets).
 - After one successful load, opening the app **without a network** should still work for the same origin (session data stays in **localStorage** as before).
-- **Install:** In supported browsers, use “Install app” / “Add to Home Screen.” Maskable/standard icons: `public/pwa-192.png`, `public/pwa-512.png` (generated from the app artwork; replace those files to rebrand).
+- **Install:** In supported browsers, use “Install app” / “Add to Home Screen.” Icons: `public/pwa-192.png`, `public/pwa-512.png`, maskable `public/pwa-512-maskable.png`, plus iOS splash images (`public/splash-*.png`).
 - **Dev:** PWA is **disabled** during `bun run dev` (`devOptions.enabled: false`) to avoid stale SW while coding. Test with `bun run build && bun run preview`.
 
 ## Stack

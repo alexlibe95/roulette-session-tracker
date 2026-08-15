@@ -7,7 +7,16 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['pwa-192.png', 'pwa-512.png'],
+      includeAssets: [
+        'favicon.svg',
+        'favicon-16.png',
+        'favicon-32.png',
+        'apple-touch-icon.png',
+        'safari-pinned-tab.svg',
+        'pwa-192.png',
+        'pwa-512.png',
+        'pwa-512-maskable.png',
+      ],
       manifest: {
         id: '/',
         name: 'Roulette session tracker',
@@ -34,7 +43,7 @@ export default defineConfig({
             purpose: 'any',
           },
           {
-            src: '/pwa-512.png',
+            src: '/pwa-512-maskable.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
@@ -42,7 +51,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,ico,woff2}', 'pwa-*.png', 'favicon*.png', 'apple-touch-icon.png', '*.svg'],
+        globIgnores: ['**/splash-*.png'],
         navigateFallback: '/index.html',
       },
       devOptions: {
