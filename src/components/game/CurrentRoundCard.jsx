@@ -5,8 +5,11 @@ import { ColorSuggestion } from './ColorSuggestion';
 import { LiveBetControls } from './LiveBetControls';
 import { AddFundsRow } from './AddFundsRow';
 
-const SAFE_LOSSES_HELP =
-  'Assumes every future loss doubles your stake (simple Martingale). If you change the stake or use progressive sizing, treat this as a guide—not a guarantee.';
+const MARTINGALE_LOSSES_HELP =
+  'Counted in whole cents. This spin uses the stake on the color disc, then each further loss doubles that stake until the balance cannot cover the next one.';
+
+const PROGRESSIVE_LOSSES_HELP =
+  'Counted in whole cents, using the same rules as the session: a loss after a win streak may step the stake down once, then losses double. Stops at the first stake your balance cannot cover.';
 
 export function CurrentRoundCard({
   round,
@@ -30,6 +33,7 @@ export function CurrentRoundCard({
   onUndo,
 }) {
   const canAffordBet = currentMoney >= currentBet && currentBet > 0 && currentMoney > 0;
+  const lossesHelp = isProgressiveBetting ? PROGRESSIVE_LOSSES_HELP : MARTINGALE_LOSSES_HELP;
   const broke = currentMoney <= 0;
   const shortfall = currentBet > currentMoney ? currentBet - currentMoney : 0;
   const showUndo = gameHistory.length > 0;
@@ -64,12 +68,12 @@ export function CurrentRoundCard({
             >
               {maxPossibleLosses}
             </strong>{' '}
-            more losses (if each loss doubles this stake)
+            more consecutive losses
             <button
               type="button"
               className="help-icon-btn"
-              aria-label={SAFE_LOSSES_HELP}
-              title={SAFE_LOSSES_HELP}
+              aria-label={lossesHelp}
+              title={lossesHelp}
             >
               <HelpCircle size={18} aria-hidden />
             </button>

@@ -2,7 +2,8 @@ import { Target } from 'lucide-react';
 
 export function AppHeader() {
   return (
-    <header className="text-center mb-4">
+    <header className="text-center mb-4 app-header">
+      <p className="app-kicker">SESSION LOG // ENTERTAINMENT ONLY</p>
       <h1 className="app-title">
         <Target className="icon" />
         Roulette session tracker

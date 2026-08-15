@@ -14,8 +14,8 @@ export default defineConfig({
         short_name: 'Roulette log',
         description:
           'Personal roulette session log for entertainment—bankroll, stakes, and outcomes. Not gambling advice.',
-        theme_color: '#667eea',
-        background_color: '#2d1b4e',
+        theme_color: '#05070d',
+        background_color: '#05070d',
         display: 'standalone',
         orientation: 'portrait-primary',
         scope: '/',

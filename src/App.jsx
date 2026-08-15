@@ -1,7 +1,6 @@
 import { useReducer, useState, useEffect, useRef } from 'react';
 import { initialPlayState, playReducer } from './game/playReducer';
-import { calculateMaxLosses, roundMoney } from './game/betting';
-import { useRiskLevel } from './hooks/useRiskLevel';
+import { calculateMaxLosses, riskFromMaxLosses, roundMoney } from './game/betting';
 import { loadSession, saveSession, clearSession } from './persistence/sessionPersistence';
 import { exportSessionJson, exportSessionCsv } from './utils/exportSession';
 import { AppHeader } from './components/AppHeader';
@@ -48,7 +47,6 @@ function App() {
   const [play, dispatchPlay] = useReducer(playReducer, initialPlayState);
   const hasHydrated = useRef(false);
   const recordLock = useRef(false);
-  const [riskLevel, setRiskLevel] = useRiskLevel(gameStarted, play.currentMoney, play.currentBet);
 
   const {
     currentMoney,
@@ -142,7 +140,6 @@ function App() {
     setBankroll('');
     setInitialBet('');
     dispatchPlay({ type: 'RESET_PLAY' });
-    setRiskLevel('low');
   };
 
   const recordResult = (won, stake) => {
@@ -162,7 +159,14 @@ function App() {
     }, 280);
   };
 
-  const maxPossibleLosses = gameStarted ? calculateMaxLosses(currentMoney, currentBet) : 0;
+  const maxPossibleLosses = gameStarted
+    ? calculateMaxLosses(currentMoney, currentBet, {
+        baseBet,
+        consecutiveWins,
+        isProgressiveBetting,
+      })
+    : 0;
+  const riskLevel = gameStarted ? riskFromMaxLosses(maxPossibleLosses) : 'low';
   const committedCapital = sessionStartingBankroll + cumulativeTopUps;
   const profitPct =
     gameStarted && committedCapital > 0 ? ((totalProfit / committedCapital) * 100).toFixed(1) : '0.0';
