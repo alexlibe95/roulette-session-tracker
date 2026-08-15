@@ -801,19 +801,48 @@
 
 .reset-confirm {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  max-width: 28rem;
+  gap: 8px;
+  max-width: 32rem;
+  margin: 24px auto 0;
+  padding: 20px 22px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 59, 107, 0.4);
+  border-radius: 10px;
+  box-shadow: 0 0 28px rgba(255, 59, 107, 0.12);
+  text-align: center;
 }
 
 .reset-confirm p {
   width: 100%;
   margin: 0;
-  font-size: 0.9rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700;
+}
+
+.reset-confirm p.reset-confirm-hint {
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+.reset-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.reset-confirm-actions .btn {
+  min-width: 140px;
 }
 
 .history-more {
@@ -1051,6 +1080,27 @@
   font-weight: 700;
 }
 
+.result-icon-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.result-icon-win {
+  color: var(--win);
+  filter: drop-shadow(0 0 8px rgba(0, 255, 166, 0.45));
+}
+
+.result-icon-loss {
+  color: var(--loss);
+  filter: drop-shadow(0 0 8px rgba(255, 59, 107, 0.45));
+}
+
 @media (max-width: 768px) {
   .app-title {
     font-size: 1.55rem;
@@ -1085,12 +1135,12 @@
 
   .history-header,
   .history-row {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 0.7fr 1fr 1fr 0.7fr;
     font-size: 0.82rem;
   }
 
-  .history-header span:nth-child(n + 4),
-  .history-row span:nth-child(n + 4) {
+  .history-header span:nth-child(n + 5),
+  .history-row span:nth-child(n + 5) {
     display: none;
   }
 
@@ -1120,12 +1170,12 @@
 
   .history-header,
   .history-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 0.7fr 1fr 1fr 0.7fr;
     padding: 10px;
   }
 
-  .history-header span:nth-child(n + 3),
-  .history-row span:nth-child(n + 3) {
+  .history-header span:nth-child(n + 5),
+  .history-row span:nth-child(n + 5) {
     display: none;
   }
 

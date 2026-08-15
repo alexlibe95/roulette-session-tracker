@@ -76,10 +76,11 @@ export function GameView({
         onUndo={onUndo}
       />
       <GameHistoryTable gameHistory={gameHistory} />
-      <div className="game-footer-actions">
-        {confirmReset ? (
-          <div className="reset-confirm" role="alertdialog" aria-labelledby="reset-confirm-title">
-            <p id="reset-confirm-title">Clear this session on this device? Export first if you want a copy.</p>
+      {confirmReset && (
+        <div className="reset-confirm" role="alertdialog" aria-labelledby="reset-confirm-title">
+          <p id="reset-confirm-title">Clear this session on this device?</p>
+          <p className="reset-confirm-hint">Export first if you want a copy.</p>
+          <div className="reset-confirm-actions">
             <button type="button" className="btn btn-danger" onClick={onReset}>
               Yes, reset
             </button>
@@ -87,7 +88,10 @@ export function GameView({
               Cancel
             </button>
           </div>
-        ) : (
+        </div>
+      )}
+      <div className="game-footer-actions">
+        {!confirmReset && (
           <button type="button" className="btn btn-primary" onClick={() => setConfirmReset(true)}>
             <RotateCcw className="inline-icon" />
             Reset session

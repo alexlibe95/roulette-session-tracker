@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { CheckCircle2, XCircle } from 'lucide-react';
 
 export function GameHistoryTable({ gameHistory }) {
   const [showAll, setShowAll] = useState(false);
@@ -24,7 +25,14 @@ export function GameHistoryTable({ gameHistory }) {
             <span>{entry.round}</span>
             <span className={`strategy-tag ${entry.strategy}`}>{entry.strategy.toUpperCase()}</span>
             <span>${entry.bet.toFixed(2)}</span>
-            <span className={`result ${entry.result}`}>{entry.result.toUpperCase()}</span>
+            <span className={`result-icon-cell ${entry.result}`}>
+              {entry.result === 'win' ? (
+                <CheckCircle2 className="result-icon result-icon-win" strokeWidth={2.4} aria-hidden />
+              ) : (
+                <XCircle className="result-icon result-icon-loss" strokeWidth={2.4} aria-hidden />
+              )}
+              <span className="sr-only">{entry.result === 'win' ? 'Win' : 'Loss'}</span>
+            </span>
             <span className={entry.profit >= 0 ? 'text-success' : 'text-danger'}>
               ${entry.profit.toFixed(2)}
             </span>
